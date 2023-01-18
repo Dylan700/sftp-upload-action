@@ -1,0 +1,24 @@
+version: "2.1"
+services:
+  sftp-server:
+    image: lscr.io/linuxserver/openssh-server:latest
+    container_name: openssh-server
+    hostname: sftp.server.com #optional
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - PUBLIC_KEY=${PUBLIC_KEY} #optional
+      # - PUBLIC_KEY_FILE=/path/to/file #optional
+      # - PUBLIC_KEY_DIR=/path/to/directory/containing/_only_/pubkeys #optional
+      # - PUBLIC_KEY_URL=https://github.com/username.keys #optional
+      - SUDO_ACCESS=true #optional
+      - PASSWORD_ACCESS=true #optional
+      - USER_PASSWORD=password #optional
+      # - USER_PASSWORD_FILE=/path/to/file #optional
+      - USER_NAME=username #optional
+    # volumes:
+      # - /path/to/appdata/config:/config
+    ports:
+      - 2222:2222
+    restart: unless-stopped

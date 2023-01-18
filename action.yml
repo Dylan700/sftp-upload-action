@@ -1,0 +1,39 @@
+name: 'SFTP Upload'
+author: 'Dylan700'
+description: 'A GitHub Action for uploading files via SFTP.'
+branding: 
+  icon: "upload"
+  color: "white"
+inputs:
+  server:
+    description: The SFTP server (e.g. sftp.server.com).
+    required: true
+  username:
+    description: The SFTP username. 
+    required: true
+  password:
+    description: The SFTP password.
+    required: false
+  key:
+    description: The private key.
+    required: false
+  passphrase: 
+    description: The passphrase for your private key.
+    required: false
+  port:
+    description: The SFTP port.
+    required: false
+    default: '22'
+  dry-run:
+    description: If true, outputs the results of the upload, without actually uploading.
+    required: false
+    default: 'false'
+  uploads:
+    description: A list of folders to upload in the format of `folder/ => upload_folder/`
+    required: true
+  ignore:
+    description: a list of files to ignore using glob patterns
+    required: false
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

@@ -1,0 +1,68 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: yarn
+      - run: yarn test
+      - run: docker compose up -d
+        env: 
+          PUBLIC_KEY: ${{secrets.PUBLIC_KEY}}
+      - run: |
+          sudo echo "127.0.0.1 sftp-server" | sudo tee -a /etc/hosts
+
+      # Basic Test with Key Login
+      - run: ./tests/e2e/setup.sh
+        env: 
+         PRIVATE_KEY: ${{secrets.PRIVATE_KEY}}
+      - uses: ./
+        with:
+          server: sftp-server
+          username: username
+          key: ${{secrets.PRIVATE_KEY}}
+          port: 2222
+          dry-run: false
+          uploads: |
+            ./src/ => ./src/
+            ./dist/ => ./dist/
+          ignore: |
+            *.txt
+      - run: ./tests/e2e/verify-basic.sh
+        shell: bash
+
+      # Basic Test with Password Login
+      - run: ./tests/e2e/setup.sh
+        env: 
+         PRIVATE_KEY: ${{secrets.PRIVATE_KEY}}
+      - uses: ./
+        with:
+          server: sftp-server
+          username: username
+          password: password
+          port: 2222
+          dry-run: false
+          uploads: |
+            ./src/ => ./src/
+            ./dist/ => ./dist/
+          ignore: |
+            *.txt
+      - run: ./tests/e2e/verify-basic.sh
+        shell: bash
