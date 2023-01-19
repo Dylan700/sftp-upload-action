@@ -12,9 +12,9 @@ This action uploads files to a remote server using the SFTP protocol. Unlike oth
 </div>
 
 ## Table of Contents
-1. [Action Inputs](##Inputs)
-1. [Examples](##Examples)
-1. [Contributions](##Contributions)
+1. [Action Inputs](#Inputs)
+1. [Examples](#Examples)
+1. [Contributions](#Contributions)
 
 ## Inputs
 
