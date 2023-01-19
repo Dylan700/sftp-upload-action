@@ -34,6 +34,10 @@ inputs:
   ignore:
     description: a list of files to ignore using glob patterns
     required: false
+  delete:
+    description: If true, any existing files in the remote upload directories are deleted.
+    required: false
+    default: 'false'
 runs:
   using: 'node16'
   main: 'dist/index.js'

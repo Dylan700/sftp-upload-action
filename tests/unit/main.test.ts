@@ -16,7 +16,8 @@ const inputs: any = {
 	"uploads": "here/ => there/",
 	"ignore": "*.yaml",
 	"passphrase": undefined,
-	"key": undefined
+	"key": undefined,
+	"delete": false
 }
 
 const testFiles: string[] = [
@@ -38,6 +39,7 @@ describe("main", () => {
 
 	beforeEach(() => {
 		inputs["dry-run"] = false
+		inputs["delete"] = false
 	})
 
 	it("disconnects from sftp when finished", async () => {
@@ -83,8 +85,19 @@ describe("main", () => {
 	})
 
 	it("calls setFailed if sftp can't connect", async () => {
-		sftp.connect.mockImplementation(() => {throw new Error()})
+		sftp.connect.mockImplementationOnce(() => {throw new Error()})
 		await main(sftp)
 		expect(core.setFailed).toBeCalled()
+	})
+
+	it("uploads folders once", async () => {
+		await main(sftp)
+		expect(sftp.uploadDir).toBeCalledTimes(1)
+	})
+
+	it("attempts to delete existing files when delete is true", async () => {
+		inputs["delete"] = true
+		await main(sftp)
+		expect(sftp.rmdir).toBeCalledTimes(1)
 	})
 })
