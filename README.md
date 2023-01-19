@@ -29,6 +29,7 @@ This action uploads files to a remote server using the SFTP protocol. Unlike oth
 | uploads | true | The folders to upload. In the format of `folder/ => upload_folder/`
 | ignore | false | A list of glob patterns for files that should be ignored. (Like the patterns you would find in .gitignore)
 | dry-run | false | If true, outputs the results of the upload, without actually uploading. |
+| delete | false | If true, any existing files in the remote upload directories are deleted. |
 
 ## Examples
 
@@ -75,6 +76,23 @@ with:
   uploads: |
     ./html/ => ./www/public_html/
     ./src/ => ./www/src/
+```
+
+### Upload multiples folders and delete existing files in those folders
+
+```yaml
+uses: actions/checkout@v3
+uses: Dylan700/sftp-upload-action@latest
+with:
+  server: sftp.server.com
+  username: jason-bourne
+  key: ${{secrets.key}}
+  passphrase: ${{secrets.passphrase}}
+  port: 22
+  uploads: |
+    ./html/ => ./www/public_html/
+    ./src/ => ./www/src/
+  delete: 'true'
 ```
 
 ## Contributions

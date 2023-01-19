@@ -1,4 +1,4 @@
-import { debug, getBooleanInput, getInput, setFailed } from "@actions/core"
+import { debug, getBooleanInput, getInput, setFailed, warning } from "@actions/core"
 import * as Client from "ssh2-sftp-client"
 import Upload from "./types/Upload"
 import minimatch, { MinimatchOptions } from "minimatch"
@@ -43,6 +43,17 @@ function is_uploadable(file: string, patterns: string[]){
 	return !patterns.some(p => minimatch(file, p, minimatch_options))
 }
 
+// recursively delete a remote folder
+async function delete_folder(sftp: Client, dir: string){
+	debug(`Deleting existing files for ${dir}...`)
+	try{
+		await sftp.rmdir(dir, true)
+		debug(`${dir} has been deleted.`)
+	}catch(e: any){
+		warning(`Unable to delete existing files for ${dir} before upload.`)
+	}
+}
+
 async function main(sftp: Client){
 	try {
 		const server: string = getInput("server")
@@ -54,7 +65,7 @@ async function main(sftp: Client){
 		const isDryRun: boolean = getBooleanInput("dry-run")
 		const uploads: Upload[] = parse_uploads(getInput("uploads"))
 		const ignored: string[] = parse_ignored(getInput("ignore"))
-
+		const shouldDelete: boolean = getBooleanInput("delete")
 		debug(`Connecting to ${server} as ${username} on port ${port}`)
 
 		await sftp.connect({
@@ -69,6 +80,7 @@ async function main(sftp: Client){
 		debug("Preparing upload...")
 		for(const upload of uploads) {
 			debug(`Processing ${upload.from} to ${upload.to}`)
+			shouldDelete ? await delete_folder(sftp, upload.to) : null
 			await sftp.uploadDir(upload.from, upload.to, {
 				filter: file => {
 					if(is_uploadable(file, ignored)){
@@ -95,4 +107,4 @@ async function main(sftp: Client){
 	}
 }
 
-export { main, parse_uploads, parse_ignored, is_uploadable }
+export { main, parse_uploads, parse_ignored, is_uploadable, delete_folder }

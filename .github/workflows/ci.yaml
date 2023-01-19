@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
+  test-unit:
 
     runs-on: ubuntu-latest
 
@@ -23,6 +23,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: yarn
       - run: yarn test
+
+  test-e2e:
+     runs-on: ubuntu-latest
+     steps:
       - run: docker compose up -d
         env: 
           PUBLIC_KEY: ${{secrets.PUBLIC_KEY}}
@@ -48,7 +52,7 @@ jobs:
       - run: ./tests/e2e/verify-basic.sh
         shell: bash
 
-      # Basic Test with Password Login
+      # Basic Test with Password Login, and Delete
       - run: ./tests/e2e/setup.sh
         env: 
          PRIVATE_KEY: ${{secrets.PRIVATE_KEY}}
@@ -64,5 +68,6 @@ jobs:
             ./dist/ => ./dist/
           ignore: |
             *.txt
+          delete: 'true'
       - run: ./tests/e2e/verify-basic.sh
         shell: bash
