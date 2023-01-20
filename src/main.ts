@@ -80,7 +80,7 @@ async function main(sftp: Client){
 		debug("Preparing upload...")
 		for(const upload of uploads) {
 			debug(`Processing ${upload.from} to ${upload.to}`)
-			shouldDelete ? await delete_folder(sftp, upload.to) : null
+			shouldDelete && !isDryRun ? await delete_folder(sftp, upload.to) : null
 			await sftp.uploadDir(upload.from, upload.to, {
 				filter: file => {
 					if(is_uploadable(file, ignored)){

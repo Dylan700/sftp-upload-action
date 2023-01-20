@@ -100,4 +100,11 @@ describe("main", () => {
 		await main(sftp)
 		expect(sftp.rmdir).toBeCalledTimes(1)
 	})
+
+	it("doesn't delete existing files when delete is true and dry-run is false", async () => {
+		inputs["delete"] = true
+		inputs["dry-run"] = true
+		await main(sftp)
+		expect(sftp.rmdir).toBeCalledTimes(0)
+	})
 })
