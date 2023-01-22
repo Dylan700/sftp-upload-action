@@ -54,6 +54,9 @@ jobs:
         shell: bash
 
       # Basic Test with Password Login, and Delete
+      - run: docker compose down && docker compose up -d
+        env: 
+          PUBLIC_KEY: ${{secrets.PUBLIC_KEY}}
       - run: ./tests/e2e/setup.sh
         env: 
          PRIVATE_KEY: ${{secrets.PRIVATE_KEY}}
@@ -71,4 +74,27 @@ jobs:
             *.txt
           delete: 'true'
       - run: ./tests/e2e/verify-basic.sh
+        shell: bash
+
+        # Test dry-run
+      - run: docker compose down && docker compose up -d
+        env: 
+          PUBLIC_KEY: ${{secrets.PUBLIC_KEY}}
+      - run: ./tests/e2e/setup.sh
+        env: 
+         PRIVATE_KEY: ${{secrets.PRIVATE_KEY}}
+      - uses: ./
+        with:
+          server: sftp-server
+          username: username
+          password: password
+          port: 2222
+          dry-run: false
+          uploads: |
+            ./src/ => ./src/
+            ./dist/ => ./dist/
+          ignore: |
+            *.txt
+          delete: 'true'
+      - run: ./tests/e2e/verify-dry-run.sh
         shell: bash
