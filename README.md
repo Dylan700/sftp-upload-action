@@ -36,6 +36,7 @@ This action uploads files to a remote server using the SFTP protocol. Unlike oth
 ### Upload everything with password
 
 ```yaml
+uses: actions/checkout@v3
 uses: Dylan700/sftp-upload-action@latest
 with:
   server: sftp.server.com
@@ -49,6 +50,7 @@ with:
 ### Upload everything with password, ignoring .git
 
 ```yaml
+uses: actions/checkout@v3
 uses: Dylan700/sftp-upload-action@latest
 with:
   server: sftp.server.com
