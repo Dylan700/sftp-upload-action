@@ -4,3 +4,4 @@ git clean -fdx
 echo "$PRIVATE_KEY" > ./key
 chmod 600 ./key
 mkdir ./tmp
+rm -f ~/.ssh/known_hosts

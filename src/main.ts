@@ -50,7 +50,7 @@ async function delete_folder(sftp: Client, dir: string){
 		await sftp.rmdir(dir, true)
 		debug(`${dir} has been deleted.`)
 	}catch(e: any){
-		warning(`Unable to delete existing files for ${dir} before upload.`)
+		warning(`Unable to delete existing files for ${dir} before upload. ${e}`)
 	}
 }
 
