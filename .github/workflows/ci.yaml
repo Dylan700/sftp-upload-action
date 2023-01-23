@@ -108,7 +108,7 @@ jobs:
           username: username
           password: password
           port: 2222
-          dry-run: false
+          dry-run: true
           uploads: |
             ./src/ => ./src/
             ./dist/ => ./dist/
