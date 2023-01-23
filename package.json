@@ -9,7 +9,7 @@
     "dist": "ncc build build/index.js --license licenses.txt --minify",
     "lint": "eslint --fix src/* tests/unit/*",
     "check-lint": "eslint src/* tests/unit/*",
-    "perf": "jest performance --runInBand",
+    "perf": "jest performance --runInBand --coverageThreshold='{\"global\":{\"statements\":\"0\"}}'",
     "clean": "rimraf dist coverage build *.log"
   },
   "repository": {
