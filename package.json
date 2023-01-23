@@ -9,6 +9,7 @@
     "dist": "ncc build build/index.js --license licenses.txt --minify",
     "lint": "eslint --fix src/* tests/unit/*",
     "check-lint": "eslint src/* tests/unit/*",
+    "perf": "yarn test performance --runInBand",
     "clean": "rimraf dist coverage build *.log"
   },
   "repository": {
@@ -37,6 +38,7 @@
     "@vercel/ncc": "^0.36.0",
     "eslint": "^8.31.0",
     "jest": "^29.3.1",
+    "kelonio": "^0.8.0",
     "rimraf": "^3.0.2",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
