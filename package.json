@@ -4,12 +4,12 @@
   "description": "A GitHub Action for uploading files via SFTP.",
   "main": "dist/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest ./unit/*",
     "predist": "tsc ./src/*.ts --outdir ./build/",
     "dist": "ncc build build/index.js --license licenses.txt --minify",
     "lint": "eslint --fix src/* tests/unit/*",
     "check-lint": "eslint src/* tests/unit/*",
-    "perf": "yarn test performance --runInBand",
+    "perf": "jest performance --runInBand",
     "clean": "rimraf dist coverage build *.log"
   },
   "repository": {

@@ -79,12 +79,14 @@ async function main(sftp: Client){
 
 		const promises: Promise<string | void>[] = []
 
-		debug("Deleting folders...")
-		for(const upload of uploads) {
-			shouldDelete && !isDryRun ? promises.push(delete_folder(sftp, upload.to)) : null
+		if(shouldDelete && !isDryRun){
+			debug("Deleting folders...")
+			for(const upload of uploads) {
+				promises.push(delete_folder(sftp, upload.to))
+			}
+			await Promise.all(promises)
+			promises.splice(0,promises.length)
 		}
-		await Promise.all(promises)
-		promises.splice(0,promises.length)
 
 		debug("Preparing upload...")
 		for(const upload of uploads) {

@@ -36,7 +36,7 @@ core.setFailed.mockImplementation((e) => {throw new Error(e)})
 
 jest.setTimeout(1000*60)
 
-describe("Testing performance for uploading 100, 2MB files", () => {
+describe("Testing performance for uploading some 2MB files", () => {
 	it("is fast", async () => {
 		// create some files to upload first
 		const promises = []
@@ -46,7 +46,7 @@ describe("Testing performance for uploading 100, 2MB files", () => {
 		}
 		await Promise.all(promises)
 
-		const measurement = await measure(() => main(sftp), { meanUnder: 500})
+		const measurement = await measure(() => main(sftp), { meanUnder: 400, iterations: 25 }) 
 		console.info(`Mean: ${measurement.mean}ms`)
 	})
 })
