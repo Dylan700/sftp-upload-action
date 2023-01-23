@@ -15,7 +15,7 @@ const sftp = new Client()
 const inputs: any = {
 	"username": "username",
 	"password": "password",
-	"server": "openssh-server",
+	"server": "localhost",
 	"port": "2222",
 	"dry-run": false,
 	"uploads": "/tmp/upload/ => /tmp/upload/",
