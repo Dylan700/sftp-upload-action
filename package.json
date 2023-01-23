@@ -4,11 +4,12 @@
   "description": "A GitHub Action for uploading files via SFTP.",
   "main": "dist/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest ./unit/*",
     "predist": "tsc ./src/*.ts --outdir ./build/",
     "dist": "ncc build build/index.js --license licenses.txt --minify",
     "lint": "eslint --fix src/* tests/unit/*",
     "check-lint": "eslint src/* tests/unit/*",
+    "perf": "jest performance --runInBand --coverageThreshold='{\"global\":{\"statements\":\"0\"}}'",
     "clean": "rimraf dist coverage build *.log"
   },
   "repository": {
@@ -37,6 +38,7 @@
     "@vercel/ncc": "^0.36.0",
     "eslint": "^8.31.0",
     "jest": "^29.3.1",
+    "kelonio": "^0.8.0",
     "rimraf": "^3.0.2",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",

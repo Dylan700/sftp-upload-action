@@ -77,11 +77,20 @@ async function main(sftp: Client){
 			passphrase: passphrase,
 		})
 
-		const promises: Promise<string>[] = []
+		const promises: Promise<string | void>[] = []
+
+		if(shouldDelete && !isDryRun){
+			debug("Deleting folders...")
+			for(const upload of uploads) {
+				promises.push(delete_folder(sftp, upload.to))
+			}
+			await Promise.all(promises)
+			promises.splice(0,promises.length)
+		}
+
 		debug("Preparing upload...")
 		for(const upload of uploads) {
 			debug(`Processing ${upload.from} to ${upload.to}`)
-			shouldDelete && !isDryRun ? await delete_folder(sftp, upload.to) : null
 			promises.push(sftp.uploadDir(upload.from, upload.to, {
 				filter: file => {
 					if(is_uploadable(file, ignored)){

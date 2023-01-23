@@ -21,8 +21,27 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      - run: docker compose up -d
       - run: yarn
       - run: yarn test
+
+  test-performance:
+
+      runs-on: ubuntu-latest
+
+      strategy:
+        matrix:
+          node-version: [16.x]
+
+      steps:
+        - uses: actions/checkout@v3
+        - name: Use Node.js ${{ matrix.node-version }}
+          uses: actions/setup-node@v3
+          with:
+            node-version: ${{ matrix.node-version }}
+        - run: docker compose up -d
+        - run: yarn
+        - run: yarn perf
 
   test-e2e:
      runs-on: ubuntu-latest
