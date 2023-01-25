@@ -2,6 +2,7 @@ import { debug, getBooleanInput, getInput, setFailed, warning } from "@actions/c
 import * as Client from "ssh2-sftp-client"
 import Upload from "./types/Upload"
 import minimatch, { MinimatchOptions } from "minimatch"
+import pLimit from "p-limit"
 
 const minimatch_options: MinimatchOptions = {
 	dot: true,
@@ -77,21 +78,23 @@ async function main(sftp: Client){
 			passphrase: passphrase,
 		})
 
+		// allow only 4 sftp operations to occur at once
+		const limit = pLimit(4)
 		const promises: Promise<string | void>[] = []
 
 		if(shouldDelete && !isDryRun){
 			debug("Deleting folders...")
 			for(const upload of uploads) {
-				promises.push(delete_folder(sftp, upload.to))
+				promises.push(limit(() => delete_folder(sftp, upload.to)))
 			}
-			await Promise.all(promises)
+			await Promise.allSettled(promises)
 			promises.splice(0,promises.length)
 		}
 
 		debug("Preparing upload...")
 		for(const upload of uploads) {
 			debug(`Processing ${upload.from} to ${upload.to}`)
-			promises.push(sftp.uploadDir(upload.from, upload.to, {
+			promises.push(limit(() => sftp.uploadDir(upload.from, upload.to, {
 				filter: file => {
 					if(is_uploadable(file, ignored)){
 						if(isDryRun){
@@ -105,9 +108,9 @@ async function main(sftp: Client){
 					debug(`Skipping ${file}`)
 					return false
 				}
-			}))
+			})))
 		}
-		await Promise.all(promises)
+		await Promise.allSettled(promises)
 		debug("Upload process complete.")
 		await sftp.end()
 		debug("Session ended.")
