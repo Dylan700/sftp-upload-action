@@ -97,5 +97,25 @@ with:
   delete: 'true'
 ```
 
+
+### Upload Specific Files
+Specific files can be uploaded be negating the `ignore` inputs with an exclamation `!` character. The example below will only upload files that have a name matching `index.html` or `.htaccess`.
+
+```yaml
+uses: actions/checkout@v3
+uses: Dylan700/sftp-upload-action@latest
+with:
+  server: sftp.server.com
+  username: jason-bourne
+  key: ${{secrets.key}}
+  passphrase: ${{secrets.passphrase}}
+  port: 22
+  uploads: |
+    ./html/ => ./www/public_html/
+  ignore: |
+    !index.html
+    !.htaccess
+```
+
 ## Contributions
 Contributions are welcome! If you have something to add or fix, just make a pull request to be reviewed.
