@@ -34,6 +34,9 @@ inputs:
   ignore:
     description: a list of files to ignore using glob patterns
     required: false
+  ignore-from:
+    description: the path to a file containing a list of files to ignore using glob patterns
+    required: false
   delete:
     description: If true, any existing files in the remote upload directories are deleted.
     required: false

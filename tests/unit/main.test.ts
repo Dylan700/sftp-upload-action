@@ -1,6 +1,7 @@
 import Client from "ssh2-sftp-client"
 import { main } from "../../src/main"
 import * as core from "@actions/core"
+import * as fs from "fs"
 
 jest.mock("ssh2-sftp-client")
 jest.mock("@actions/core")
@@ -107,4 +108,37 @@ describe("main", () => {
 		await main(sftp)
 		expect(sftp.rmdir).toBeCalledTimes(0)
 	})
+
+	it("reads an ignore file if 'ignore' is not defined and 'ignore-from' is defined", async () => {
+		inputs["ignore-from"] = "./myignorefile1.txt"
+		inputs["ignore"] = ""
+		const data = `
+			*
+
+		`
+		fs.writeFileSync("./myignorefile1.txt", data)
+		await main(sftp)
+		const filter_fn = sftp.uploadDir.mock.calls[0][2].filter
+		expect(testFiles.every(file => filter_fn(file))).toBeFalsy()
+		fs.rmSync("./myignorefile1.txt")
+	})
+
+	it("does not read an ignore file if 'ignore' is defined and 'ignore-from' is defined", async () => {
+		const data1 = `
+			*
+
+		`
+
+		const data2 = `
+
+		`
+		inputs["ignore-from"] = "./myignorefile2.txt"
+		inputs["ignore"] = data1
+		fs.writeFileSync("./myignorefile2.txt", data2)
+		await main(sftp)
+		const filter_fn = sftp.uploadDir.mock.calls[0][2].filter
+		expect(testFiles.every(file => filter_fn(file))).toBeFalsy()
+		fs.rmSync("./myignorefile2.txt")
+	})
+	
 })
