@@ -3,6 +3,7 @@ import * as Client from "ssh2-sftp-client"
 import Upload from "./types/Upload"
 import minimatch, { MinimatchOptions } from "minimatch"
 import pLimit from "p-limit"
+import * as fs from "fs"
 
 const minimatch_options: MinimatchOptions = {
 	dot: true,
@@ -55,6 +56,14 @@ async function delete_folder(sftp: Client, dir: string){
 	}
 }
 
+// read a file and convert it to a string. Returns an empty string if the path is empty.
+function file_to_string(path: string){
+	if(path === ""){
+		return ""
+	}
+	return fs.readFileSync(path, {encoding: "utf8"})
+}
+
 async function main(sftp: Client){
 	try {
 		const server: string = getInput("server")
@@ -67,6 +76,12 @@ async function main(sftp: Client){
 		const uploads: Upload[] = parse_uploads(getInput("uploads"))
 		const ignored: string[] = parse_ignored(getInput("ignore"))
 		const shouldDelete: boolean = getBooleanInput("delete")
+
+		// attempt to read ignored files from a file, if it is not defined directly
+		if(ignored.length == 0){
+			ignored.push(...parse_ignored(file_to_string(getInput("ignore-from"))))
+		}
+
 		debug(`Connecting to ${server} as ${username} on port ${port}`)
 
 		await sftp.connect({
@@ -120,4 +135,4 @@ async function main(sftp: Client){
 	}
 }
 
-export { main, parse_uploads, parse_ignored, is_uploadable, delete_folder }
+export { main, parse_uploads, parse_ignored, is_uploadable, delete_folder, file_to_string }

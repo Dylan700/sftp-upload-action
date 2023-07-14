@@ -28,6 +28,7 @@ This action uploads files to a remote server using the SFTP protocol. Unlike oth
 | port | false | The SFTP port, defaults to port 22 |
 | uploads | true | The folders to upload. In the format of `folder/ => upload_folder/`
 | ignore | false | A list of glob patterns for files that should be ignored. (Like the patterns you would find in .gitignore)
+| ignore-from | false | The path to a file containing a list of glob patterns for files that should be ignored. (Like the patterns you would find in .gitignore)
 | dry-run | false | If true, outputs the results of the upload, without actually uploading. |
 | delete | false | If true, any existing files in the remote upload directories are deleted. |
 
