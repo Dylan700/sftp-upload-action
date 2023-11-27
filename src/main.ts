@@ -93,8 +93,8 @@ async function main(sftp: Client){
 			passphrase: passphrase,
 		})
 
-		// allow only 4 sftp operations to occur at once
-		const limit = pLimit(4)
+		// allow only 1 sftp operation to occur at once
+		const limit = pLimit(1)
 		const promises: Promise<string | void>[] = []
 
 		if(shouldDelete && !isDryRun){
