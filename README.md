@@ -15,6 +15,7 @@ This action uploads files to a remote server using the SFTP protocol. Unlike oth
 1. [Action Inputs](#Inputs)
 1. [Examples](#Examples)
 1. [Contributions](#Contributions)
+1. [Testing](#Running-Without-Actions)
 
 ## Inputs
 
@@ -120,3 +121,21 @@ with:
 
 ## Contributions
 Contributions are welcome! If you have something to add or fix, just make a pull request to be reviewed.
+
+## Running Without Actions
+If you'd like to run this script without an action for troubleshooting or testing purposes, you can set all the inputs as environment variables and run the node file directly. For example:
+
+```bash
+#!/bin/bash
+
+export INPUT_USERNAME=username
+export INPUT_PASSWORD=password
+export INPUT_PORT=2222
+export INPUT_SERVER=localhost
+export INPUT_UPLOADS="./ => ./"
+export INPUT_DELETE=false
+
+env "INPUT_DRY-RUN=true" bash -c "node ./dist/index.js"
+```
+
+When you're testing e2e, don't forget to start the SFTP server with `docker-compose up -d`.
