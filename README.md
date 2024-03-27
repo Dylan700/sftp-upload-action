@@ -38,7 +38,7 @@ This action uploads files to a remote server using the SFTP protocol. Unlike oth
 ### Upload everything with password
 
 ```yaml
-uses: actions/checkout@v3
+uses: actions/checkout@v4
 uses: Dylan700/sftp-upload-action@latest
 with:
   server: sftp.server.com
@@ -52,7 +52,7 @@ with:
 ### Upload everything with password, ignoring .git
 
 ```yaml
-uses: actions/checkout@v3
+uses: actions/checkout@v4
 uses: Dylan700/sftp-upload-action@latest
 with:
   server: sftp.server.com
@@ -69,7 +69,7 @@ with:
 ### Upload multiple folders with private key
 
 ```yaml
-uses: actions/checkout@v3
+uses: actions/checkout@v4
 uses: Dylan700/sftp-upload-action@latest
 with:
   server: sftp.server.com
@@ -85,7 +85,7 @@ with:
 ### Upload multiples folders and delete existing files in those folders
 
 ```yaml
-uses: actions/checkout@v3
+uses: actions/checkout@v4
 uses: Dylan700/sftp-upload-action@latest
 with:
   server: sftp.server.com
@@ -104,7 +104,7 @@ with:
 Specific files can be uploaded be negating the `ignore` inputs with an exclamation `!` character. The example below will only upload files that have a name matching `index.html` or `.htaccess`.
 
 ```yaml
-uses: actions/checkout@v3
+uses: actions/checkout@v4
 uses: Dylan700/sftp-upload-action@latest
 with:
   server: sftp.server.com

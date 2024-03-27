@@ -1,11 +1,11 @@
 import { debug, getBooleanInput, getInput, setFailed, warning } from "@actions/core"
 import * as Client from "ssh2-sftp-client"
 import Upload from "./types/Upload"
-import minimatch, { MinimatchOptions } from "minimatch"
+import minimatch from "minimatch"
 import pLimit from "p-limit"
 import * as fs from "fs"
 
-const minimatch_options: MinimatchOptions = {
+const minimatch_options = {
 	dot: true,
 	matchBase: true
 }
