@@ -51,3 +51,59 @@ describe("Testing performance for uploading some 2MB files", () => {
 	})
 })
 
+
+describe("Testing performance for uploading some 1MB files", () => {
+    it("is fast", async () => {
+        // create some files to upload first
+        const promises = []
+        await execPromise("rm -rdf /tmp/upload && mkdir /tmp/upload")
+        for(let i = 0; i < 10; i++){
+            promises.push(execPromise(`head -c 1000000 </dev/urandom >/tmp/upload/${i}.bin`))
+        }
+        await Promise.all(promises)
+
+        const measurement = await measure(() => main(sftp), { meanUnder: 400, iterations: 50 }) 
+        console.info(`Mean: ${measurement.mean}ms`)
+    })
+})
+
+describe("Testing performance for uploading some 500KB files", () => {
+    it("is fast", async () => {
+        // create some files to upload first
+        const promises = []
+        await execPromise("rm -rdf /tmp/upload && mkdir /tmp/upload")
+        for(let i = 0; i < 20; i++){
+            promises.push(execPromise(`head -c 500000 </dev/urandom >/tmp/upload/${i}.bin`))
+        }
+        await Promise.all(promises)
+
+        const measurement = await measure(() => main(sftp), { meanUnder: 400, iterations: 100 }) 
+        console.info(`Mean: ${measurement.mean}ms`)
+    })
+})
+
+describe("Testing performance for uploading a large number of small files", () => {
+    it("is fast", async () => {
+        // create some files to upload first
+        const promises = []
+        await execPromise("rm -rdf /tmp/upload && mkdir /tmp/upload")
+        for(let i = 0; i < 100; i++){
+            promises.push(execPromise(`head -c 10000 </dev/urandom >/tmp/upload/${i}.bin`))
+        }
+        await Promise.all(promises)
+
+        const measurement = await measure(() => main(sftp), { meanUnder: 500, iterations: 50 }) 
+        console.info(`Mean: ${measurement.mean}ms`)
+    })
+})
+
+describe("Testing performance for uploading a single large file", () => {
+    it("is fast", async () => {
+        // create a large file to upload
+        await execPromise("rm -rdf /tmp/upload && mkdir /tmp/upload")
+        await execPromise(`head -c 50000000 </dev/urandom >/tmp/upload/large.bin`)
+
+        const measurement = await measure(() => main(sftp), { meanUnder: 2000, iterations: 10 }) 
+        console.info(`Mean: ${measurement.mean}ms`)
+    })
+})
