@@ -64,6 +64,34 @@ function file_to_string(path: string){
 	return fs.readFileSync(path, {encoding: "utf8"})
 }
 
+// creates a dictionary of remote file sizes
+async function getRemoteFileSizes(sftp: Client, path: string,fromPath: string) {
+	debug(`Getting file sizes in ${path}`);
+	if(path ==="./"){
+	  path=".";
+	}
+	const files = await sftp.list(path);
+	const fileSizes: Record<string, number> = {};
+  
+	const processDirectory = async (dirPath: string) => {
+	  const dirFiles = await sftp.list(dirPath);
+	  for (const item of dirFiles) {
+		const fullPath = `${dirPath}/${item.name}`;
+		const dirPathSliced= dirPath.slice(1);
+		const key=`${fromPath}${dirPathSliced}/${item.name}`;
+		if (item.type === "-") {
+		  
+		  fileSizes[key] = item.size;
+		  debug(`${key} - size: ${item.size}`);
+		} else if (item.type === "d") {
+		  await processDirectory(fullPath); // Recursive call
+		}
+	  }
+	};
+  
+	await processDirectory(path);
+	return fileSizes;
+  }
 async function main(sftp: Client){
 	try {
 		const server: string = getInput("server")
@@ -76,7 +104,7 @@ async function main(sftp: Client){
 		const uploads: Upload[] = parse_uploads(getInput("uploads"))
 		const ignored: string[] = parse_ignored(getInput("ignore"))
 		const shouldDelete: boolean = getBooleanInput("delete")
-
+		const compare: boolean = getBooleanInput("compare");
 		// attempt to read ignored files from a file, if it is not defined directly
 		if(ignored.length == 0){
 			ignored.push(...parse_ignored(file_to_string(getInput("ignore-from"))))
@@ -105,8 +133,55 @@ async function main(sftp: Client){
 			await Promise.allSettled(promises)
 			promises.splice(0,promises.length)
 		}
-
+		// get remote file sizes
+		const remoteFileSizesDict: Record<string, number>[] = [];
+		for (const upload of uploads) {
+		 remoteFileSizesDict.push(await limit(() => ( getRemoteFileSizes(sftp, upload.to,upload.from))));
+		}
+		
 		debug("Preparing upload...")
+		if(compare){
+			let i =0;
+      for (const upload of uploads) {
+        debug(`Processing ${upload.from} to ${upload.to}`);
+        promises.push(
+          limit(  async () =>{
+            await sftp.uploadDir(upload.from, upload.to, {
+               filter:  file=> {
+                if (is_uploadable(file, ignored)) {
+                    // Compare the local file with the remote file
+                    if (remoteFileSizesDict[i].hasOwnProperty(`./${file}`)) {
+                      if ( remoteFileSizesDict[i][`./${file}`] !== fs.statSync(file).size) {
+						if(isDryRun){
+							debug(`${file} would have been uploaded because it has changed`)
+							return false
+						}else{
+                        debug(`Uploading ${file} because it has changed`);
+                        return true;
+						}
+                      }
+                    } 
+                    else {
+						if(isDryRun){
+							debug(`${file} would have been uploaded because it does not exist`)
+							return false
+						}else{
+                      debug(`Uploading ${file} because it does not exist`);
+                      return true;
+					}
+                    }
+                }
+                debug(`Skipping ${file}`);
+
+                return false;
+              },
+            })
+          i++;
+          }
+          )
+        );
+      }
+	}else{
 		for(const upload of uploads) {
 			debug(`Processing ${upload.from} to ${upload.to}`)
 			promises.push(limit(() => sftp.uploadDir(upload.from, upload.to, {
@@ -125,6 +200,7 @@ async function main(sftp: Client){
 				}
 			})))
 		}
+	}
 		await Promise.allSettled(promises)
 		debug("Upload process complete.")
 		await sftp.end()
