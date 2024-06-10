@@ -41,6 +41,10 @@ inputs:
     description: If true, any existing files in the remote upload directories are deleted.
     required: false
     default: 'false'
+  compare:
+    description: If true, the action will compare the remote files against the local files and only upload new/changed files.
+    required: false
+    default: 'false'
 runs:
   using: 'node20'
   main: 'dist/index.js'
