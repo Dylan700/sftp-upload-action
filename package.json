@@ -27,7 +27,8 @@
     "@actions/github": "^5.1.1",
     "minimatch": "^6.1.5",
     "p-limit": "3.1.0",
-    "ssh2-sftp-client": "^9.0.4"
+    "ssh2-sftp-client": "^9.0.4",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.20.2",
