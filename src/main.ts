@@ -70,7 +70,6 @@ async function getRemoteFileSizes(sftp: Client, path: string,fromPath: string) {
 	if(path ==="./"){
 		path="."
 	}
-	// const files = await sftp.list(path)
 	const fileSizes: Record<string, number> = {}
   
 	const processDirectory = async (dirPath: string) => {
