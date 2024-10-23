@@ -38,65 +38,73 @@ This action uploads files to a remote server using the SFTP protocol. Unlike oth
 ### Upload everything with password
 
 ```yaml
-uses: actions/checkout@v4
-uses: Dylan700/sftp-upload-action@latest
-with:
-  server: sftp.server.com
-  username: jason-bourne
-  password: ${{secrets.password}}
-  port: 22
-  uploads: |
-  ./ => ./www/public_html/
+- name: Checkout
+  uses: actions/checkout@v4
+- name: SFTP upload
+  uses: Dylan700/sftp-upload-action@latest
+  with:
+    server: sftp.server.com
+    username: jason-bourne
+    password: ${{secrets.password}}
+    port: 22
+    uploads: |
+    ./ => ./www/public_html/
 ```
 
 ### Upload everything with password, ignoring .git
 
 ```yaml
-uses: actions/checkout@v4
-uses: Dylan700/sftp-upload-action@latest
-with:
-  server: sftp.server.com
-  username: jason-bourne
-  password: ${{secrets.password}}
-  port: 22
-  uploads: |
-    ./ => ./www/public_html/
-  ignore: |
-    *.git
-    */**/*git*
+- name: Checkout
+  uses: actions/checkout@v4
+- name: SFTP upload
+  uses: Dylan700/sftp-upload-action@latest
+  with:
+    server: sftp.server.com
+    username: jason-bourne
+    password: ${{secrets.password}}
+    port: 22
+    uploads: |
+      ./ => ./www/public_html/
+    ignore: |
+      *.git
+      */**/*git*
 ```
 
 ### Upload multiple folders with private key
 
 ```yaml
-uses: actions/checkout@v4
-uses: Dylan700/sftp-upload-action@latest
-with:
-  server: sftp.server.com
-  username: jason-bourne
-  key: ${{secrets.key}}
-  passphrase: ${{secrets.passphrase}}
-  port: 22
-  uploads: |
-    ./html/ => ./www/public_html/
-    ./src/ => ./www/src/
+- name: Checkout
+  uses: actions/checkout@v4
+- name: SFTP upload
+  uses: Dylan700/sftp-upload-action@latest
+  with:
+    server: sftp.server.com
+    username: jason-bourne
+    key: ${{secrets.key}}
+    passphrase: ${{secrets.passphrase}}
+    port: 22
+    uploads: |
+      ./html/ => ./www/public_html/
+      ./src/ => ./www/src/
 ```
 
 ### Upload multiples folders and delete existing files in those folders
 
 ```yaml
-uses: actions/checkout@v4
-uses: Dylan700/sftp-upload-action@latest
-with:
-  server: sftp.server.com
-  username: jason-bourne
-  key: ${{secrets.key}}
-  passphrase: ${{secrets.passphrase}}
-  port: 22
-  uploads: |
-    ./html/ => ./www/public_html/
-    ./src/ => ./www/src/
-  delete: 'true'
+- name: Checkout
+  uses: actions/checkout@v4
+- name: SFTP upload
+  uses: Dylan700/sftp-upload-action@latest
+  with:
+    server: sftp.server.com
+    username: jason-bourne
+    key: ${{secrets.key}}
+    passphrase: ${{secrets.passphrase}}
+    port: 22
+    uploads: |
+      ./html/ => ./www/public_html/
+      ./src/ => ./www/src/
+    delete: 'true'
 ```
 
 
@@ -104,19 +112,21 @@ with:
 Specific files can be uploaded be negating the `ignore` inputs with an exclamation `!` character. The example below will only upload files that have a name matching `index.html` or `.htaccess`.
 
 ```yaml
-uses: actions/checkout@v4
-uses: Dylan700/sftp-upload-action@latest
-with:
-  server: sftp.server.com
-  username: jason-bourne
-  key: ${{secrets.key}}
-  passphrase: ${{secrets.passphrase}}
-  port: 22
-  uploads: |
-    ./html/ => ./www/public_html/
-  ignore: |
-    !index.html
-    !.htaccess
+- name: Checkout
+  uses: actions/checkout@v4
+- name: SFTP upload
+  uses: Dylan700/sftp-upload-action@latest
+  with:
+    server: sftp.server.com
+    username: jason-bourne
+    key: ${{secrets.key}}
+    passphrase: ${{secrets.passphrase}}
+    port: 22
+    uploads: |
+      ./html/ => ./www/public_html/
+    ignore: |
+      !index.html
+      !.htaccess
 ```
 
 ## Contributions
