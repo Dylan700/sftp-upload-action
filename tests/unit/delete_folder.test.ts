@@ -9,8 +9,8 @@ const sftp = new Client()
 
 describe("delete_folder", () => {
 	it("displays a warning when files cannot be deleted", async () => {
-		sftp.rmdir.mockImplementationOnce(() => {throw new Error("Can't delete")})
-		await delete_folder(sftp, "my_folder/here/")
+		const sftpFake: any = { rmdir: async () => { throw new Error("Can't delete") } }
+		await delete_folder(sftpFake, "my_folder/here/")
 		expect(core.warning).toBeCalled()
 	})
 

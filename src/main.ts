@@ -102,7 +102,11 @@ async function main(sftp: Client){
 			for(const upload of uploads) {
 				promises.push(limit(() => delete_folder(sftp, upload.to)))
 			}
-			await Promise.allSettled(promises)
+			const deleteResults = await Promise.allSettled(promises)
+			const deleteRejected = deleteResults.filter(r => (r as PromiseRejectedResult).status === 'rejected') as PromiseRejectedResult[]
+			if(deleteRejected.length > 0){
+				throw new Error(`Failed to delete folders: ${deleteRejected.map(r => r.reason?.message || String(r.reason)).join('; ')}`)
+			}
 			promises.splice(0,promises.length)
 		}
 
@@ -125,7 +129,11 @@ async function main(sftp: Client){
 				}
 			})))
 		}
-		await Promise.allSettled(promises)
+		const uploadResults = await Promise.allSettled(promises)
+		const uploadRejected = uploadResults.filter(r => (r as PromiseRejectedResult).status === "rejected") as PromiseRejectedResult[]
+		if(uploadRejected.length > 0){
+			throw new Error(`Upload errors: ${uploadRejected.map(r => r.reason?.message || String(r.reason)).join("; ")}`)
+		}
 		debug("Upload process complete.")
 		await sftp.end()
 		debug("Session ended.")
