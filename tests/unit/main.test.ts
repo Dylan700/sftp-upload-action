@@ -8,7 +8,7 @@ jest.mock("@actions/core")
 
 const sftp = new Client()
 
-const inputs: any = {
+const inputs: Record<string, string | boolean | undefined> = {
 	"username": "username",
 	"password": "password",
 	"server": "server",
@@ -139,6 +139,19 @@ describe("main", () => {
 		const filter_fn = sftp.uploadDir.mock.calls[0][2].filter
 		expect(testFiles.every(file => filter_fn(file))).toBeFalsy()
 		fs.rmSync("./myignorefile2.txt")
+	})
+
+	it("calls setFailed if an upload fails", async () => {
+		sftp.uploadDir.mockImplementationOnce(() => Promise.reject(new Error("upload failed")))
+		await main(sftp)
+		expect(core.setFailed).toBeCalled()
+	})
+
+	it("calls setFailed if delete (rmdir) fails", async () => {
+		inputs["delete"] = true
+		sftp.rmdir.mockImplementationOnce(() => Promise.reject(new Error("rmdir failed")))
+		await main(sftp)
+		expect(core.setFailed).toBeCalled()
 	})
 	
 })
