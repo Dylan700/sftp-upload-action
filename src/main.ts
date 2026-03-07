@@ -51,8 +51,10 @@ async function delete_folder(sftp: Client, dir: string){
 	try{
 		await sftp.rmdir(dir, true)
 		debug(`${dir} has been deleted.`)
-	}catch(e: any){
-		warning(`Unable to delete existing files for ${dir} before upload. ${e}`)
+	}catch(e: unknown){
+		const msg = e instanceof Error ? e.message : String(e)
+		warning(`Unable to delete existing files for ${dir} before upload. ${msg}`)
+		throw e
 	}
 }
 
@@ -103,9 +105,9 @@ async function main(sftp: Client){
 				promises.push(limit(() => delete_folder(sftp, upload.to)))
 			}
 			const deleteResults = await Promise.allSettled(promises)
-			const deleteRejected = deleteResults.filter(r => (r as PromiseRejectedResult).status === 'rejected') as PromiseRejectedResult[]
+			const deleteRejected = deleteResults.filter(r => (r as PromiseRejectedResult).status === "rejected") as PromiseRejectedResult[]
 			if(deleteRejected.length > 0){
-				throw new Error(`Failed to delete folders: ${deleteRejected.map(r => r.reason?.message || String(r.reason)).join('; ')}`)
+				throw new Error(`Failed to delete folders: ${deleteRejected.map(r => r.reason?.message || String(r.reason)).join("; ")}`)
 			}
 			promises.splice(0,promises.length)
 		}
@@ -138,8 +140,9 @@ async function main(sftp: Client){
 		await sftp.end()
 		debug("Session ended.")
 
-	} catch (error: any) {
-		setFailed(error.message)
+	} catch (error: unknown) {
+		const msg = error instanceof Error ? error.message : String(error)
+		setFailed(msg)
 	}
 }
 

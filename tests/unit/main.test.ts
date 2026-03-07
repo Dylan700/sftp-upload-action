@@ -8,7 +8,7 @@ jest.mock("@actions/core")
 
 const sftp = new Client()
 
-const inputs: any = {
+const inputs: Record<string, string | boolean | undefined> = {
 	"username": "username",
 	"password": "password",
 	"server": "server",
@@ -147,11 +147,11 @@ describe("main", () => {
 		expect(core.setFailed).toBeCalled()
 	})
 
-	it("expects a warning if delete (rmdir) fails", async () => {
+	it("calls setFailed if delete (rmdir) fails", async () => {
 		inputs["delete"] = true
 		sftp.rmdir.mockImplementationOnce(() => Promise.reject(new Error("rmdir failed")))
 		await main(sftp)
-		expect(core.warning).toBeCalled()
+		expect(core.setFailed).toBeCalled()
 	})
 	
 })
