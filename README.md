@@ -39,7 +39,7 @@ This action uploads files to a remote server using the SFTP protocol. Unlike oth
 
 ```yaml
 - name: Checkout
-  uses: actions/checkout@v4
+  uses: actions/checkout@v6
 - name: SFTP upload
   uses: Dylan700/sftp-upload-action@latest
   with:
@@ -55,7 +55,7 @@ This action uploads files to a remote server using the SFTP protocol. Unlike oth
 
 ```yaml
 - name: Checkout
-  uses: actions/checkout@v4
+  uses: actions/checkout@v6
 - name: SFTP upload
   uses: Dylan700/sftp-upload-action@latest
   with:
@@ -74,7 +74,7 @@ This action uploads files to a remote server using the SFTP protocol. Unlike oth
 
 ```yaml
 - name: Checkout
-  uses: actions/checkout@v4
+  uses: actions/checkout@v6
 - name: SFTP upload
   uses: Dylan700/sftp-upload-action@latest
   with:
@@ -92,7 +92,7 @@ This action uploads files to a remote server using the SFTP protocol. Unlike oth
 
 ```yaml
 - name: Checkout
-  uses: actions/checkout@v4
+  uses: actions/checkout@v6
 - name: SFTP upload
   uses: Dylan700/sftp-upload-action@latest
   with:
@@ -113,7 +113,7 @@ Specific files can be uploaded be negating the `ignore` inputs with an exclamati
 
 ```yaml
 - name: Checkout
-  uses: actions/checkout@v4
+  uses: actions/checkout@v6
 - name: SFTP upload
   uses: Dylan700/sftp-upload-action@latest
   with:
